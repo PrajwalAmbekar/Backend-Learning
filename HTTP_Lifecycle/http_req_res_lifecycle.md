@@ -7,87 +7,90 @@ A client request travels through DNS → OS → Node.js HTTP server → Express 
 
 ## ⚙️ Node.js Request Lifecycle (Low-Level)
 
-### 🔁 Flowchart (Execution Order)
+### 🔁 Flowchart
 ```mermaid
 flowchart TD
     A[🌐 Client Browser] --> B[📡 DNS Resolution]
     B --> C[🖥️ Operating System]
-    C --> D[🔌 TCP Socket]
+    C --> D[🔌 TCP Connection]
     D --> E[⚙️ Node.js HTTP Server]
     E --> F[📄 Raw HTTP Request]
-🧠 Mind Map
-mermaid
-Copy code
+```
+
+### 🧠 Mind Map
+```mermaid
 mindmap
   root((Node.js HTTP Flow))
     Client
       Browser
       Mobile App
     DNS
-      Domain Name
+      Domain
       IP Address
     OS
       Port Binding
       Network Stack
     TCP
       Connection
-      Data Transfer
     Node.js
       http.createServer
       Event Loop
-🔍 Step-by-Step Flow
-<details> <summary>Click to expand</summary>
-🌐 Client requests https://example.com/api/users/123
+```
 
-📡 DNS converts domain name into server IP address
+### 🔍 Step-by-Step Flow
+<details>
+<summary>Click to expand</summary>
 
-🖥️ OS receives connection on port 443
-
-🔌 TCP connection is established
-
-⚙️ Node.js http server receives raw HTTP data
-
-📄 Request exists as raw HTTP (method, headers, body)
+1. User enters `example.com`
+2. DNS resolves domain → IP address
+3. OS receives request on port `443`
+4. TCP connection is established
+5. Node.js HTTP server receives raw HTTP data
 
 </details>
-🧪 Example (Same as Flow)
-<details> <summary>Click to expand</summary>
-User opens browser → types example.com
-DNS returns IP 13.233.xx.xx
-OS routes traffic to port 443
-Node.js server listening on 443 receives request
-Request exists as raw HTTP text
+
+### 🧪 Example
+<details>
+<summary>Click to expand</summary>
+
+Browser → `GET /api/users/123`  
+DNS → returns IP  
+OS → routes to port 443  
+Node.js → receives raw HTTP request
 
 </details>
-💡 Why + Common Mistakes
-<details> <summary>Click to expand</summary>
-Why
 
-Node.js handles low-level networking and concurrency efficiently using event-driven architecture.
+### 💡 Why + Common Mistakes
+<details>
+<summary>Click to expand</summary>
 
-Common Mistakes
+**Why**
+- Node.js efficiently handles many connections using event-driven architecture.
 
-Blocking the event loop
-
-Assuming Node directly handles DNS (it does not)
-
-Confusing OS responsibilities with Node.js
+**Common Mistakes**
+- Blocking the event loop
+- Thinking Node handles DNS
+- Mixing OS and Node responsibilities
 
 </details>
-🚀 Express.js Request Lifecycle (High-Level)
-🔁 Flowchart (Execution Order)
-mermaid
-Copy code
+
+---
+
+## 🚀 Express.js Request Lifecycle (High-Level)
+
+### 🔁 Flowchart
+```mermaid
 flowchart TD
     A[📄 Raw HTTP Request] --> B[⚙️ Node HTTP Server]
     B --> C[🧱 Express App]
     C --> D[🧩 Middleware Chain]
     D --> E[🎯 Route Handler]
-    E --> F[📦 Business Logic / DB]
-    F --> G[📤 Response]
-🧠 Mind Map
-mermaid
-Copy code
+    E --> F[📦 DB / Service Logic]
+    F --> G[📤 HTTP Response]
+```
+
+### 🧠 Mind Map
+```mermaid
 mindmap
   root((Express Flow))
     Express App
@@ -95,7 +98,6 @@ mindmap
       Auth
       Logger
       Validator
-    Route Handler
     Request Object
       params
       query
@@ -103,42 +105,41 @@ mindmap
     Response Object
       status
       json
-🔍 Step-by-Step Flow
-<details> <summary>Click to expand</summary>
-⚙️ Node hands request to Express
+```
 
-📦 Express creates req and res objects
+### 🔍 Step-by-Step Flow
+<details>
+<summary>Click to expand</summary>
 
-🧩 Middleware runs sequentially using next()
-
-🎯 Route handler executes
-
-📦 Database or service logic runs
-
-📤 res.send() / res.json() ends cycle
+1. Node passes request to Express
+2. Express creates `req` and `res`
+3. Middleware runs sequentially
+4. Route handler executes
+5. Response is sent using `res.send()`
 
 </details>
-🧪 Example (Same as Flow)
-<details> <summary>Click to expand</summary>
-User hits GET /api/users/123
-Express parses URL → req.params.id = 123
-Auth middleware validates user
-Controller fetches user from DB
-Response returned as JSON
+
+### 🧪 Example
+<details>
+<summary>Click to expand</summary>
+
+Request → `/api/users/123`  
+Auth middleware validates user  
+Controller fetches data  
+Express sends JSON response
 
 </details>
-💡 Why + Common Mistakes
-<details> <summary>Click to expand</summary>
-Why
 
-Express abstracts raw HTTP handling into a clean, structured request–response pipeline.
+### 💡 Why + Common Mistakes
+<details>
+<summary>Click to expand</summary>
 
-Common Mistakes
+**Why**
+- Express simplifies HTTP handling and structure.
 
-Forgetting next() in middleware
+**Common Mistakes**
+- Forgetting `next()`
+- Sending response twice
+- Wrong middleware order
 
-Sending response twice
-
-Incorrect middleware order
-
-</details> ```
+</details>
