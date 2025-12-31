@@ -1,0 +1,2 @@
+This is an example of writing to a file asynchronously using Node.js
+This is an appended line using appendFile
