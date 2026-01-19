@@ -1,5 +1,6 @@
 const fs = require("fs");
 const readline = require("readline");
+const fsPromises = require('fs').promises;
 
 exports.createLogsFile = () => {
   fs.writeFile("./miniProjects/Multi-User-Event-Logger/logs.txt", "", (err) => {
@@ -62,4 +63,40 @@ exports.retrieveUserLog = async ( userId) => {
 
   rl.close();
   readStream.destroy();
+};
+
+exports.deleteUserLog = async (userId) => {
+  const filePath = "./miniProjects/Multi-User-Event-Logger/logs.txt";
+  const tempPath = filePath + ".tmp";
+  
+  const readStream = fs.createReadStream(filePath);
+  const writeStream = fs.createWriteStream(tempPath);
+  const rl = readline.createInterface({ input: readStream, crlfDelay: Infinity });
+
+  let deleted = false;
+
+  for await (const line of rl) {
+    if (line.startsWith(userId)) {
+      deleted = true;
+    } else {
+      writeStream.write(line + "\n");
+    }
+  }
+
+  writeStream.end();
+
+  
+  await new Promise((resolve) => writeStream.on("finish", resolve));
+
+  
+  try {
+    // fsPromises.rename overwrites the destination if it exists
+    await fsPromises.rename(tempPath, filePath);
+  } catch (err) {
+    // Fallback if rename fails: delete original then rename
+    await fsPromises.unlink(filePath);
+    await fsPromises.rename(tempPath, filePath);
+  }
+
+  return deleted ? "unlinked" : " not found";
 };

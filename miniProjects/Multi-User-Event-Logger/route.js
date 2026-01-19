@@ -22,6 +22,7 @@ const routes = async (req, res, pathname, parseUrl) => {
           break;
         case "DELETE":
             const deleteUserLog = await userDetails.deleteUserLog(userId);
+            res.end(`User log ${deleteUserLog}`);
           break;
         case "POST":
           const result = await userDetails.writeUserLog(req, userId);
