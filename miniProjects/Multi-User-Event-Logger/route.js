@@ -21,14 +21,16 @@ const routes = async (req, res, pathname, parseUrl) => {
           res.end(`user details are: ${userFound}`);
           break;
         case "DELETE":
-            const deleteUserLog = await userDetails.deleteUserLog(userId);
-            res.end(`User log ${deleteUserLog}`);
+          const deleteUserLog = await userDetails.deleteUserLog(userId);
+          res.end(`User log ${deleteUserLog}`);
           break;
         case "POST":
           const result = await userDetails.writeUserLog(req, userId);
           res.end(`User log ${result} successfully`);
       }
       break;
+    default:
+      res.end("pathName not found");
   }
 };
 module.exports = routes;
